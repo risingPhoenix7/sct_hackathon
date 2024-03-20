@@ -5,6 +5,74 @@ from itertools import permutations
 import os
 
 
+class HeldKarp:
+    def __init__(self, distance_matrix):
+        self.distance = distance_matrix
+        self.n = len(distance_matrix)  # Number of nodes
+        self.C = []
+        self.init_base_cases()
+
+    def init_base_cases(self):
+        # Initialize base cases: C({k}, k) = d[0,k]
+        base_cases = dict()
+        for k in range(1, self.n):
+            base_cases[(1 << k, k)] = {
+                'cost': self.distance[0][k], 'path': [0, k]}
+        self.C.append(base_cases)
+
+    def solve(self):
+        # Dynamic programming approach
+        for s in range(2, self.n):
+            new_cases = dict()
+            for subset in self.generate_subsets(s, self.n):
+                for k in subset:
+                    if k == 0:
+                        continue
+                    best_cost = float('inf')
+                    best_prev = -1
+                    subset_without_k = subset - {k}
+                    subset_without_k_code = self.subset_to_code(
+                        subset_without_k)
+                    for m in subset:
+                        if m == k:
+                            continue
+                        prev_cost = self.C[-1].get((subset_without_k_code, m), {
+                                                   'cost': float('inf')})['cost']
+                        cost_with_m_to_k = prev_cost + self.distance[m][k]
+                        if cost_with_m_to_k < best_cost:
+                            best_cost = cost_with_m_to_k
+                            best_prev = m
+                    new_cases[(self.subset_to_code(subset), k)] = {
+                        'cost': best_cost, 'path': self.C[-1][(subset_without_k_code, best_prev)]['path'] + [k]}
+            self.C.append(new_cases)
+
+        # Find optimal solution
+        full_set = set(range(1, self.n))
+        full_set_code = self.subset_to_code(full_set)
+        opt = float('inf')
+        final_path = []
+        for k in range(1, self.n):
+            cost_with_return = self.C[-1][(full_set_code, k)
+                                          ]['cost'] + self.distance[k][0]
+            if cost_with_return < opt:
+                opt = cost_with_return
+                final_path = self.C[-1][(full_set_code, k)]['path'] + [0]
+
+        return opt, final_path
+
+    def generate_subsets(self, size, n):
+        # Generate all subsets of size `size` from the set {1, ..., n-1}
+        from itertools import combinations
+        return [set(s) for s in combinations(range(1, n), size)]
+
+    def subset_to_code(self, subset):
+        # Convert a subset to its code representation
+        code = 0
+        for element in subset:
+            code |= 1 << element
+        return code
+
+
 # Read the dataset
 def read_dataset(filepath):
     return pd.read_csv(filepath)
@@ -128,6 +196,66 @@ def greedy_tsp(dist_matrix):
     path.append(0)  # Complete the cycle by returning to the start
 
     return cost, path
+# Function to find the minimum key vertex from the set of vertices not yet included in MST
+
+
+def findMinKey(key, mstSet, V):
+    min_val = float('inf')
+    min_index = -1
+    for v in range(V):
+        if not mstSet[v] and key[v] < min_val:
+            min_val = key[v]
+            min_index = v
+    return min_index
+
+# Function to perform Prim's algorithm to find the Minimum Spanning Tree (MST)
+
+
+def primMST(graph, V):
+    parent = [-1] * V
+    key = [float('inf')] * V
+    mstSet = [False] * V
+    key[0] = 0  # Start from vertex 0
+
+    for _ in range(V - 1):
+        u = findMinKey(key, mstSet, V)
+        mstSet[u] = True
+
+        for v in range(V):
+            if graph[u][v] and not mstSet[v] and graph[u][v] < key[v]:
+                parent[v] = u
+                key[v] = graph[u][v]
+    return parent
+
+# Function to find preorder traversal of the tree based on MST
+
+
+def findPreorderTraversal(parent, node, visited, path, V):
+    visited[node] = True
+    path.append(node)
+    for i in range(V):
+        if parent[i] == node and not visited[i]:
+            findPreorderTraversal(parent, i, visited, path, V)
+
+# Main function for the Traveling Salesperson Approximation Algorithm
+
+
+def tspApproximation(graph, V):
+    # Find the Minimum Spanning Tree using Prim's Algorithm
+    parent = primMST(graph, V)
+
+    # Find preorder traversal of the MST to approximate Hamiltonian cycle
+    visited = [False] * V
+    path = []
+    findPreorderTraversal(parent, 0, visited, path, V)
+    path.append(0)  # Adding the start node at the end to complete the cycle
+
+    # Calculate the cost of the Hamiltonian path
+    cost = 0
+    for i in range(1, len(path)):
+        cost += graph[path[i - 1]][path[i]]
+
+    return cost, path
 
 
 def write_best_route_distance(input_filepath, distance, output_directory):
@@ -171,8 +299,22 @@ def main(input_filepath):
     # Solve the TSP
     if len(distance_matrix) <= 13:
         total_distance, sequence = tsp_dp(distance_matrix)
+        
+    elif len(distance_matrix) <= 20:
+        solver = HeldKarp(distance_matrix)
+        total_distance, sequence = solver.solve()
     else:
-        total_distance, sequence = greedy_tsp(distance_matrix)
+        total_distanceG, sequenceG = greedy_tsp(distance_matrix)
+        total_distanceA, sequenceA = tspApproximation(
+            distance_matrix, len(distance_matrix))
+
+        total_distance = min(total_distanceA, total_distanceG)
+        if total_distanceA < total_distanceG:
+
+            sequence = sequenceA
+
+        else:
+            sequence = sequenceG
 
     for i, a in enumerate(sequence):
         if a == 0:
