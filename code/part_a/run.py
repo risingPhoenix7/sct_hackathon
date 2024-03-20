@@ -282,9 +282,9 @@ def main(input_filepath):
     # Parse the input filepath to generate the output filepath
     output_filepath = input_filepath.replace('input', 'output')
     output_directory = os.path.dirname(output_filepath)
-    print(output_directory)
-    print(input_filepath)
-    print(output_filepath)
+    # print(output_directory)
+    # print(input_filepath)
+    # print(output_filepath)
 
     # Ensure the output directory exists
     if not os.path.exists(output_directory):
@@ -326,7 +326,7 @@ def main(input_filepath):
     # print("data", data)
 
     data.to_csv(output_filepath, index=False)
-    print(total_distance, sequence)
+    # print(total_distance, sequence)
 
     # Write the best route distance to the summary CSV file
     write_best_route_distance(input_filepath, total_distance, output_directory)

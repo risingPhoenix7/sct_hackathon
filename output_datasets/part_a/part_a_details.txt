@@ -10,7 +10,7 @@ Explanation: The Held-Karp algorithm is an extension of dynamic programming spec
 How it works: Similar to dynamic programming, the Held-Karp algorithm breaks down the problem into subproblems and iteratively computes the optimal solution for each subset of cities. However, it employs additional optimizations to avoid redundant computations and improve efficiency.
 Why it works: The Held-Karp algorithm works for the TSP because it efficiently prunes the search space by exploiting the problem's structure and properties. By considering the properties of the TSP, such as the triangle inequality, it can eliminate redundant calculations and significantly reduce the time complexity compared to a naive dynamic programming approach.
 
-3.Greedy Algorithm:
+3. Greedy Algorithm:
 [For dataset 4 & 5 which are larger datasets]
 Explanation: The greedy algorithm for the TSP makes decisions based on local information at each step, without considering the global structure of the problem. It selects the next city to visit based on a heuristic, such as choosing the nearest unvisited city.
 How it works: Starting from an initial city, the greedy algorithm iteratively selects the closest unvisited city and adds it to the tour. This process continues until all cities have been visited, and the tour returns to the starting city to complete the cycle.
