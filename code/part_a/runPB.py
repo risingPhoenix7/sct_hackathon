@@ -270,10 +270,10 @@ def main(input_filepath):
     # print(distance_matrix)
 
     # Solve the TSP
-    # if len(distance_matrix) <= 13:
-    #     total_distance, sequence = tsp_dp(distance_matrix)
-    # else:
-    total_distance, sequence = christofides_algorithm(distance_matrix)
+    if len(distance_matrix) <= 13:
+        total_distance, sequence = tsp_dp(distance_matrix)
+    else:
+        total_distance, sequence = christofides_algorithm(distance_matrix)
 
     for i, a in enumerate(sequence):
         if a == 0:
@@ -293,7 +293,5 @@ def main(input_filepath):
 # Filepath for example, replace with parameter when calling main
 # main('input_datasets/part_a/part_a_input_dataset_1.csv')
 if __name__ == '__main__':
-    main(f'input_datasets/part_a/part_a_input_dataset_3.csv')
-
-    # for (i) in range(1, 6):
-    #     main(f'input_datasets/part_a/part_a_input_dataset_{i}.csv')
+    for (i) in range(1, 6):
+        main(f'input_datasets/part_a/part_a_input_dataset_{i}.csv')
