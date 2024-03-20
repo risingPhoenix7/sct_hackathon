@@ -1,0 +1,17 @@
+1. Dynamic Programming (DP):
+[For datasets 1 & 2 which are smaller datasets]
+Explanation: The dynamic programming approach for solving the TSP involves breaking down the problem into smaller subproblems and solving each subproblem only once, storing the solutions to avoid redundant calculations. In the TSP, the subproblems involve finding the shortest path from the starting node to each of the other nodes, visiting each node exactly once, and returning to the starting node.
+How it works: The algorithm computes the shortest path for all possible subsets of cities, starting from the smallest subsets (e.g., subsets of size 2) and gradually increasing the size until reaching the full set of cities. It iteratively calculates the shortest path for each subset by considering all possible intermediate nodes.
+Why it works: Dynamic programming works for the TSP because it efficiently explores all possible combinations of city sequences and stores the optimal solutions to subproblems. By leveraging the optimal solutions to smaller subproblems, it can efficiently compute the optimal solution for the entire problem.
+
+2. Held-Karp Algorithm:
+[For dataset 3 which is a mid-length dataset]
+Explanation: The Held-Karp algorithm is an extension of dynamic programming specifically designed for solving the TSP. It optimizes the dynamic programming approach by exploiting the problem's properties, such as the triangular inequality, to reduce the number of subproblems that need to be solved.
+How it works: Similar to dynamic programming, the Held-Karp algorithm breaks down the problem into subproblems and iteratively computes the optimal solution for each subset of cities. However, it employs additional optimizations to avoid redundant computations and improve efficiency.
+Why it works: The Held-Karp algorithm works for the TSP because it efficiently prunes the search space by exploiting the problem's structure and properties. By considering the properties of the TSP, such as the triangle inequality, it can eliminate redundant calculations and significantly reduce the time complexity compared to a naive dynamic programming approach.
+
+3.Greedy Algorithm:
+[For dataset 4 & 5 which are larger datasets]
+Explanation: The greedy algorithm for the TSP makes decisions based on local information at each step, without considering the global structure of the problem. It selects the next city to visit based on a heuristic, such as choosing the nearest unvisited city.
+How it works: Starting from an initial city, the greedy algorithm iteratively selects the closest unvisited city and adds it to the tour. This process continues until all cities have been visited, and the tour returns to the starting city to complete the cycle.
+Why it works: The greedy algorithm works well for small to medium-sized instances of the TSP due to its simplicity and efficiency. Although it does not guarantee an optimal solution, it often produces reasonably good solutions in a short amount of time. However, it may fail to find the optimal solution for larger instances or instances with complex topologies due to its myopic nature and inability to backtrack.

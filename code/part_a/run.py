@@ -3,6 +3,7 @@ import pandas as pd
 from scipy.spatial.distance import pdist, squareform
 from itertools import permutations
 import os
+import sys
 
 
 class HeldKarp:
@@ -299,7 +300,7 @@ def main(input_filepath):
     # Solve the TSP
     if len(distance_matrix) <= 13:
         total_distance, sequence = tsp_dp(distance_matrix)
-        
+
     elif len(distance_matrix) <= 20:
         solver = HeldKarp(distance_matrix)
         total_distance, sequence = solver.solve()
@@ -334,5 +335,11 @@ def main(input_filepath):
 # Filepath for example, replace with parameter when calling main
 # main('input_datasets/part_a/part_a_input_dataset_1.csv')
 if __name__ == '__main__':
-    for (i) in range(1, 6):
-        main(f'input_datasets/part_a/part_a_input_dataset_{i}.csv')
+    # for (i) in range(1, 6):
+    #     main(f'input_datasets/part_a/part_a_input_dataset_{i}.csv')
+    if len(sys.argv) != 2:
+        print("Usage: python code/part_a/run.py <input_file_path>")
+        sys.exit(1)
+
+    input_file_path = sys.argv[1]
+    main(input_file_path)
