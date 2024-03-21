@@ -5,6 +5,36 @@ from itertools import permutations
 import os
 import sys
 
+import random
+
+def initialPopulation(popSize, cityList):
+    population = []
+    for i in range(0, popSize):
+        individual = random.sample(range(len(cityList)), len(cityList))
+        population.append(individual)
+    return population
+
+
+def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations):
+    pop = initialPopulation(popSize, population)
+
+    # Print all routes as a single array of routes
+    all_routes = []
+    for route in pop:
+        all_routes.append(route)
+
+    initial_distance = 1 / rankRoutes(pop)[0][1]
+
+    for i in range(0, generations):
+        pop = nextGeneration(pop, eliteSize, mutationRate)
+
+    final_distance = 1 / rankRoutes(pop)[0][1]
+
+    bestRouteIndex = rankRoutes(pop)[0][0]
+    bestRoute = pop[bestRouteIndex]
+
+    return bestRoute, final_distance
+
 
 class HeldKarp:
     def __init__(self, distance_matrix):
@@ -277,7 +307,35 @@ def write_output(data, sequence, output_filepath):
 # The main function
 
 
+def geneticAlgorithm(distance_matrix, popSize, eliteSize, mutationRate, generations):
+    cityList = [City(x=i, y=i) for i in range(len(distance_matrix))]
+
+    pop = initialPopulation(popSize, cityList)
+
+    # Print all routes as a single array of routes
+    all_routes = []
+    for route in pop:
+        all_routes.append(route)
+
+    initial_distance = 1 / rankRoutes(pop)[0][1]
+
+    for i in range(0, generations):
+        pop = nextGeneration(pop, eliteSize, mutationRate)
+
+    final_distance = 1 / rankRoutes(pop)[0][1]
+
+    bestRouteIndex = rankRoutes(pop)[0][0]
+    bestRoute = pop[bestRouteIndex]
+
+    return bestRoute, final_distance
+
+
 def main(input_filepath):
+    POPULATION_SIZE = 100
+    ELITE_SIZE = 20
+    MUTATION_RATE = 0.01
+    NUMBER_OF_GENERATIONS = 500
+
     # Parse the input filepath to generate the output filepath
     output_filepath = input_filepath.replace('input', 'output')
     output_directory = os.path.dirname(output_filepath)
@@ -300,21 +358,23 @@ def main(input_filepath):
     if len(distance_matrix) <= 13:
         total_distance, sequence = tsp_dp(distance_matrix)
 
-    elif len(distance_matrix) <= 20:
-        solver = HeldKarp(distance_matrix)
-        total_distance, sequence = solver.solve()
-    else:
-        total_distanceG, sequenceG = greedy_tsp(distance_matrix)
-        tSPApproximation = TSPApproximation()
-        total_distanceA, sequenceA = tSPApproximation.tspApproximation(
-            distance_matrix, len(distance_matrix))
-        total_distance = min(total_distanceA, total_distanceG)
-        if total_distanceA < total_distanceG:
+    # elif len(distance_matrix) <= 20:
+    #     solver = HeldKarp(distance_matrix)
+    #     total_distance, sequence = solver.solve()
+    # else:
+    #     total_distanceG, sequenceG = greedy_tsp(distance_matrix)
+    #     total_distanceA, sequenceA = TSPApproximation
+    #     distance_matrix, len(distance_matrix))=
 
-            sequence = sequenceA
+    #     total_distance = min(total_distanceA, total_distanceG)
+    #     if total_distanceA < total_distanceG:
 
-        else:
-            sequence = sequenceG
+    #         sequence = sequenceA
+
+    #     else:
+    #         sequence = sequenceG
+    total_distance, sequence = geneticAlgorithm(distance_matrix, popSize=POPULATION_SIZE, eliteSize=ELITE_SIZE,
+                                                mutationRate=MUTATION_RATE, generations=NUMBER_OF_GENERATIONS)
 
     for i, a in enumerate(sequence):
         if a == 0:
